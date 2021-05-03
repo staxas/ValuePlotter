@@ -1,0 +1,23 @@
+#!/bin/bash
+
+# GetCollValue v1.0 May 2021 by Edwin Rietmeijer
+
+
+d=$(date +%Y.%m.%d)
+
+getData() {
+  curl -s -X GET https://api.discogs.com/users/EdSpinsRecords/collection/value?token=BqscuakYmCZyONsNbqznrGSmBaSyMNeMOsvwqtlc --user-agent "ValuePlotter/1.0"
+}
+
+cleanup() {
+  val=$(echo "${1}" | jq ".${2}" | tr -d \",€)
+  echo ${val}
+}
+
+data=$(getData)
+
+minimum=$(cleanup "${data}" "minimum")
+median=$(cleanup "${data}" "median")
+maximum=$(cleanup "${data}" "maximum")
+
+echo ${d} ${minimum} ${median} ${maximum}

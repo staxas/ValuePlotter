@@ -1,0 +1,43 @@
+#!/bin/bash
+
+# ValuePlotter v1.0 May 2021 by Edwin Rietmeijer
+# Installation of gnuplot and jq is required
+
+if [[ -z ${1} ]]; then
+  echo "Usage: $(basename ${0}) [email address]"
+  exit 0;
+fi
+
+fileRoot="$( cd "$(dirname "$0")" || exit >/dev/null 2>&1 ; pwd -P )"
+
+graphImageLocation="${fileRoot}/tmp/collectionvalue.png"
+collectionValueDataLocation="${fileRoot}/data/collvalue.dat"
+plotScriptTemplateLocation="${fileRoot}/collvalue.tpl"
+parsedScriptLocation="${fileRoot}/tmp/collvalue.plt"
+graphs=()
+graphs+=("${graphImageLocation}")
+
+# Load template into memory
+plotScriptTemplate=$(cat ${plotScriptTemplateLocation})
+
+# Replace variables in gnuplot script with values and write to file
+parsedScript=$(eval "echo \"${plotScriptTemplate}\"")
+echo "${parsedScript}" > "${parsedScriptLocation}"
+
+# Read latest collection value data
+. "${fileRoot}/getcollvalue" >> "${collectionValueDataLocation}"
+
+# Render graph
+gnuplot "${parsedScriptLocation}"
+
+# Mail graph
+echo -e "subject:Collection value\n"| (cat - && (for g in ${graphs} ; do uuencode "${g}" $(basename "${g}") ; done )  ) | /usr/sbin/ssmtp "${1}"
+
+# Delete temporary files
+if [[ -f "${parsedScriptLocation}" ]]; then
+  rm "${parsedScriptLocation}"
+fi
+
+if [[ -f "${graphImageLocation}" ]]; then
+  rm "${graphImageLocation}"
+fi
