@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # GetCollValue v1.0 May 2021 by Edwin Rietmeijer
-
+# Installation of jq is required
 
 d=$(date +%Y.%m.%d)
 

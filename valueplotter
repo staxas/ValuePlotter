@@ -10,12 +10,15 @@ fi
 
 fileRoot="$( cd "$(dirname "$0")" || exit >/dev/null 2>&1 ; pwd -P )"
 
+tmpDirectoryLocation="${fileRoot}/tmp"
 graphImageLocation="${fileRoot}/tmp/collectionvalue.png"
 collectionValueDataLocation="${fileRoot}/data/collvalue.dat"
 plotScriptTemplateLocation="${fileRoot}/collvalue.tpl"
 parsedScriptLocation="${fileRoot}/tmp/collvalue.plt"
 graphs=()
 graphs+=("${graphImageLocation}")
+
+mkdir -p ${tmpDirectoryLocation}
 
 # Load template into memory
 plotScriptTemplate=$(cat ${plotScriptTemplateLocation})
@@ -34,10 +37,4 @@ gnuplot "${parsedScriptLocation}"
 echo -e "subject:Collection value\n"| (cat - && (for g in ${graphs} ; do uuencode "${g}" $(basename "${g}") ; done )  ) | /usr/sbin/ssmtp "${1}"
 
 # Delete temporary files
-if [[ -f "${parsedScriptLocation}" ]]; then
-  rm "${parsedScriptLocation}"
-fi
-
-if [[ -f "${graphImageLocation}" ]]; then
-  rm "${graphImageLocation}"
-fi
+if [ -d "${tmpDirectoryLocation}" ]; then rm -Rf ${tmpDirectoryLocation}; fi
