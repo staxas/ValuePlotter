@@ -6,7 +6,7 @@
 d=$(date +%Y.%m.%d)
 
 getData() {
-  curl -s -X GET https://api.discogs.com/users/EdSpinsRecords/collection/value?token=[yourtokenhere] --user-agent "ValuePlotter/1.0"
+  curl -s -X GET https://api.discogs.com/users/EdSpinsRecords/collection/value?token=yourtokenhere --user-agent "ValuePlotter/1.0"
 }
 
 cleanup() {
