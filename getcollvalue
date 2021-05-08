@@ -6,7 +6,11 @@
 d=$(date +%Y.%m.%d)
 regex="([0-9]+)\.[0-9]+"
 getData() {
-  curl -s -X GET https://api.discogs.com/users/EdSpinsRecords/collection/value?token=YFeoLmqlbTLeISwzOmoPaxQyHoZjZtmfnGOlUTdQ --user-agent "ValuePlotter/1.0"
+<<<<<<< HEAD
+  curl -s -X GET https://api.discogs.com/users/EdSpinsRecords/collection/value?token=yourkeyhere --user-agent "ValuePlotter/1.0"
+=======
+  curl -s -X GET https://api.discogs.com/users/EdSpinsRecords/collection/value?token=yourtokenhere --user-agent "ValuePlotter/1.0"
+>>>>>>> 890410e36570d9d73b09f986d8f9521a164b020e
 }
 
 cleanup() {
