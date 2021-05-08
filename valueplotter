@@ -10,31 +10,33 @@ fi
 
 fileRoot="$( cd "$(dirname "$0")" || exit >/dev/null 2>&1 ; pwd -P )"
 
-tmpDirectoryLocation="${fileRoot}/tmp"
-graphImageLocation="${fileRoot}/tmp/collectionvalue.png"
-collectionValueDataLocation="${fileRoot}/data/collvalue.dat"
-plotScriptTemplateLocation="${fileRoot}/collvalue.tpl"
-parsedScriptLocation="${fileRoot}/tmp/collvalue.plt"
-graphs=()
-graphs+=("${graphImageLocation}")
+tmpDirectoryPath="${fileRoot}/tmp"
+parsedScriptPath="${tmpDirectoryPath}/collvalue.plt"
+graphImagePath="${tmpDirectoryPath}/collectionvalue.png"
 
-mkdir -p ${tmpDirectoryLocation}
+dataDirectoryPath="${fileRoot}/data"
+collectionValueDataPath="${dataDirectoryPath}/collvalue.dat"
+plotScriptTemplatePath="${dataDirectoryPath}/collvalue.tpl"
+
+graphs+=("${graphImagePath}")
+
+mkdir -p ${tmpDirectoryPath}
 
 # Load template into memory
-plotScriptTemplate=$(cat ${plotScriptTemplateLocation})
+plotScriptTemplate=$(cat ${plotScriptTemplatePath})
 
 # Replace variables in gnuplot script with values and write to file
 parsedScript=$(eval "echo \"${plotScriptTemplate}\"")
-echo "${parsedScript}" > "${parsedScriptLocation}"
+echo "${parsedScript}" > "${parsedScriptPath}"
 
 # Read latest collection value data
-. "${fileRoot}/getcollvalue" >> "${collectionValueDataLocation}"
+. "${fileRoot}/getcollvalue" >> "${collectionValueDataPath}"
 
 # Render graph
-gnuplot "${parsedScriptLocation}"
+gnuplot "${parsedScriptPath}"
 
 # Mail graph
 echo -e "subject:Collection value\n"| (cat - && (for g in ${graphs} ; do uuencode "${g}" $(basename "${g}") ; done )  ) | /usr/sbin/ssmtp "${1}"
 
 # Delete temporary files
-if [ -d "${tmpDirectoryLocation}" ]; then rm -Rf ${tmpDirectoryLocation}; fi
+if [ -d "${tmpDirectoryPath}" ]; then rm -Rf ${tmpDirectoryPath}; fi

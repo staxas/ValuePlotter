@@ -4,14 +4,18 @@
 # Installation of jq is required
 
 d=$(date +%Y.%m.%d)
-
+regex="([0-9]+)\.[0-9]+"
 getData() {
-  curl -s -X GET https://api.discogs.com/users/EdSpinsRecords/collection/value?token=BqscuakYmCZyONsNbqznrGSmBaSyMNeMOsvwqtlc --user-agent "ValuePlotter/1.0"
+  curl -s -X GET https://api.discogs.com/users/EdSpinsRecords/collection/value?token=YFeoLmqlbTLeISwzOmoPaxQyHoZjZtmfnGOlUTdQ --user-agent "ValuePlotter/1.0"
 }
 
 cleanup() {
   val=$(echo "${1}" | jq ".${2}" | tr -d \",€)
-  echo ${val}
+  if [[ $val =~ $regex ]]
+    then
+    retval=${BASH_REMATCH[1]}
+  fi
+  echo $retval
 }
 
 data=$(getData)
